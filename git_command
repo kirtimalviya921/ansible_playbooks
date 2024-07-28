@@ -1,0 +1,90 @@
+git ls-files (to see the files which is in staging area)
+
+git reset filename (to reset or remove the file from the staging area)
+
+                    (to undo commit from local repo level)
+
+git log --oneline (to know to the commited files and their commit ID)
+ Note: - (HEAD-> master) is showing the latest commit file
+
+
+git init (to initialize)
+git add filename (add files to staging area)
+git commit -m "firt commit" (to commit the file)
+git branch (to see the current branch)
+git branch -m main (to switch into main branch)
+git config --global user.name "Kirti Malviya"
+git config --global user.email "kirtimalviya921@gmail.com"
+git remote add origin https://github.com/kirtimalviya921/ansible_playbooks.git
+git push -u origin main (to push the file in main branch)
+
+
+
+
+
+
+git add file2.txt;git commit -m "file2 commited2" (to add the file in staging area and commit)
+
+=======================================================================================
+ --mixed
+ --soft
+ --hard
+
+1) reset with --mixed mode
+   it is the default mode
+   to discard commits in the local repository and changes in staging area
+   it will not touch woring directory
+
+Example :- git reset <mode> <commit id>
+
+
+   git reset --mixed acb9dec (mixed mode will delete files from staging and commit area but not touch working directory)
+
+
+2) reset with --soft mode
+   it is exactly same  as --mixed but changes are available in working directory as well as in stagin area
+   it won't touch staging are and working directory
+   it will only remove from local repository
+   As changes already present in staging  area, just we have to use commit to revert back.
+
+3) reset with --hard mode
+   it will remove from all three area, working directory, staging area, local repository permanentely
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+++++++++++++++++++++ [ --mixed vs --soft vs --hard] +++++++++++++++++++++++++++++++
+
+
+1 --mixed
+
+ . changes will be discarded in local repo and staging area.
+ . it wont touch working directory
+ . wokring tree wont be clean
+ . but we can revert with
+   git add.
+   git commit
+
+2 --soft
+   
+ . changes will be discarded only in local repository
+ . it wont touch staging are and wokrking directory
+ . wokring tree wont be clean
+ . but we can revert with
+    git commit
+
+3 --hard
+
+  . changes will be discarded from everywhere
+  . working tree wont be clean
+  . no way to revert  
+
+
+   
+
+
+
+
+
+
+
