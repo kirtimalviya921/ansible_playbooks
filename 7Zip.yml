@@ -1,0 +1,12 @@
+---
+- hosts: server
+  become: yes
+  connection: ssh
+  user: ibadmin
+  gather_facts: yes
+  tasks:
+          - name: install 7zip
+            win_chocolatey:
+                    name: 7zip
+                    state: present
+

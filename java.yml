@@ -1,0 +1,105 @@
+---
+- hosts: server
+  user: ibadmin
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+
+         - name: ping all node
+           ping:
+
+         - name: update
+           apt:
+                 update_cache: yes
+
+         - name: dist upgrade
+           apt:
+                 upgrade: dist
+
+         - name: Install Curl
+           apt:
+                 name: curl
+                 state: present
+
+         - name: Install Chrome
+           apt:
+                 deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+         - name: Install openjdk8
+           apt:
+                 #deb: https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.deb
+                 deb: https://download.oracle.com/java/20/latest/jdk-20_linux-x64_bin.deb
+                 # deb: http://archive.ubuntu.com/ubuntu/pool/universe/o/openjdk-8/openjdk-8-jdk_8u372-ga~us1-0ubuntu1~20.04_amd64.deb
+
+                   # - name: Install Vscode
+                   # apt:
+                   # deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+
+                   # - name: netbeans install
+                   # apt:
+                   # deb: https://github.com/codelerity/netbeans-installers/releases/download/v16-build1/apache-netbeans_16-1_amd64.deb
+                   # name: netbeans
+                   # state: present
+
+                   # - name: snap install
+                   # apt:
+                   # name: snap
+                   # state: present
+
+                   # - name: Install Notepad++
+                   # snap:
+                   # name: notepad-plus-plus
+                   # state: present
+
+         - name: Install Apache2
+           apt:
+                 name: apache2
+                 state: present
+
+         - name: Install php7.4
+           apt:
+             # name: ['php7.4-cli','php7.4-json','php7.4-common','php7.4-mysql','php7.4-zip','php7.4-gd','php7.4-mbstring','php7.4-curl','php7.4-xml','php7.4-bcmath'] 
+                  name: ['php8.0-cli','php8.0-common','php8.0-mysql','php8.0-zip','php8.0-gd','php8.0-mbstring','php8.0-curl','php8.0-xml','php8.0-bcmath']
+ 
+         - name: Install mysql
+           apt:
+                 name: ['mysql-server','python3-mysqldb']
+
+         - name: copy my.cnf
+           template:
+                   src: my.cnf
+                   dest: /root/.my.cnf
+
+         - name: update root password
+           mysql_user:
+                    name: root
+                    host: "{{item}}"
+                    priv: '*.*:ALL,GRANT'
+                    login_unix_socket: /var/run/mysqld/mysqld.sock
+                    password: server.123  
+           with_items:
+                    - localhost
+                    - 127.0.0.1
+
+                      # - name: add apt key for nodesource
+                      # apt_key:
+                      # url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+                      # state: present
+
+                      # - name: add repo for nodesource
+                      # apt_repository:
+                      # repo: "{{item}}"
+                      # with_items:
+                      # - 'deb https://deb.nodesource.com/node_16.x focal main'
+                      # - 'deb-src https://deb.nodesource.com/node_16.x focal main'
+                      # - 'deb https://dl.yarnpkg.com/debian stable main'
+
+         - name: update apt cache
+           apt:
+                 update_cache: yes
+
+                   # - name: install nodejs
+                   # apt:
+                   # name: nodejs
+                   # state: present

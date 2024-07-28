@@ -1,0 +1,13 @@
+---
+- hosts: server
+  user: ibadmin
+  connection: ssh
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: install multiple packages
+      apt:
+        name: ['git','make','wget','telnet','gzip', 'gcc','vim']
+        state: latest
+

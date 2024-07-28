@@ -1,0 +1,11 @@
+---
+- hosts: server
+  user: ibadmin
+  connection: ssh
+  become: yes
+  gather_facts: yes
+  tasks:
+
+    - name: Download and install google chrome
+      apt:
+        deb: https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_127.0.6533.72-1_amd64.deb

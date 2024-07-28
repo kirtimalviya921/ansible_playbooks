@@ -1,0 +1,83 @@
+---
+- hosts: server
+  user: ibadmin
+  connection: ssh
+  become: yes
+  gather_facts: yes
+  tasks:
+          - name: Ping to all nodes
+            ping:
+          
+          - name: cache update
+            apt:
+                  update_cache: yes
+
+          - name: upgrade dist
+            apt:
+                    upgrade: dist
+
+          - name: install apache2
+            apt:
+                    name: apache2
+                    state: present
+          
+          - name: Restart apache2
+            service:
+                    name: apache2
+                    state: restarted
+
+          - name: Php install
+            apt:
+                    name: ['php7.4','php7.4-cli','php7.4-json','php7.4-common','php7.4-mysql','php7.4-zip','php7.4-gd','php7.4-mbstring','php7.4-curl','php7.4-xml','php7.4-bcmath']
+
+
+          - name: Install MySql
+            apt:
+                 name: ['mysql-server','python3-mysqldb',]
+          
+          - name: Update root Password
+            mysql_user:
+                    name: root
+                    host: "{{item}}"
+                    priv: '*.*:ALL,GRANT'
+                    login_unix_socket: /var/run/mysqld/mysqld.sock
+            with_items:
+                    - localhost
+                    - 127.0.0.1
+
+          - name: Create MySQL DB
+            mysql_db:
+                    name: wordpress
+                    state: present            
+
+          - name: Create DB user
+            mysql_user:
+                    name: wordpress
+                    password: Info@12345
+                    priv: '*.*:ALL'
+                    state: present
+          
+          - name: Download Wordpress
+            get_url:
+                 url: https://wordpress.org/latest.tar.gz
+                 dest: /tmp/latest.tar.gz
+          
+          - name: Unzip
+            unarchive:
+                    src: /tmp/latest.tar.gz
+                    dest: /tmp/
+                    copy: no
+                    mode: '777'
+
+          - name: Move to html
+            copy:
+                 src: /tmp/wordpress/
+                 dest: /var/www/html/
+                 remote_src: yes
+                 mode: 777
+          
+          - name: Copy wp-config.php file
+            copy:
+                    src: wp-config.php
+                    dest: /var/www/html       
+                    

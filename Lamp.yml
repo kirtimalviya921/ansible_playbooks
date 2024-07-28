@@ -1,0 +1,121 @@
+---
+- hosts: server
+  become: yes
+  connection: ssh
+  user: shoaibhusain
+  gather_facts: yes
+  tasks:
+          - name: ping all nodes
+            ping:
+
+          - name: update cache
+            apt:
+                    update_cache: yes
+          
+                      # - name: dist upgrade
+                      # apt:
+                      # upgrade: dist
+          
+          - name: Google Chrome install
+            apt:
+                    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          
+          - name: Vscode install
+            apt:
+                    deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64          
+                           
+
+          - name: Install apache
+            apt:
+                   name: apache2
+                   state: present
+          
+          - name: Install MariaDB
+            apt:
+                 name: ['mariadb-server','python3-mysqldb',]                
+
+          - name: Install Php7.4
+            apt:
+                 name: ['php7.4','php7.4-cli','php7.4-json','php7.4-common','php7.4-mysql','php7.4-zip','php7.4-gd','php7.4-mbstring','php7.4-curl','php7.4-xml','php7.4-bcmath'] 
+                 state: present
+
+          - name: copy info.php file
+            copy:
+                  src: info.php
+                  dest: /var/www/html       
+
+          - name: Install PhpMyadmin
+            apt:
+                 name: phpmyadmin
+                 state: present
+
+          - name: Repalce apache2.conf
+            template:
+                    src: /home/ibadmin/Documents/apache2.conf
+                    dest: /etc/apache2/apache2.conf        
+
+          - name: Restart services
+            service:
+                    name: '{{item}}'
+                    state: restarted
+            with_items:
+                    - apache2
+                    - mysql           
+          
+          - name: copy cnf file
+            template:
+                    src: my.cnf
+                    dest: /root/.my.cnf          
+          
+          - name: Update root password
+            mysql_user:
+                   name: root
+                   host: "{{item}}"
+                   priv: '*.*:ALL,GRANT'
+                   login_unix_socket: /var/run/mysqld/mysqld.sock
+                   password: server.123
+            with_items:
+                   - localhost
+                   - 127.0.0.1
+
+          - name: copy script file
+            copy:
+                  src: script.sh
+                  dest: /home/ibadmin/Documents
+
+          - name: set file permission
+            file:
+                    path: /home/ibadmin/Documents/script.sh
+                    mode: '777'
+
+          - name: Run scrip file
+            script: /home/ibadmin/Documents/script.sh
+
+          - name: Remove script file
+            file:
+                    state: absent
+                    path: /home/ibadmin/Documents/script.sh  
+
+                    #          - name: copy sapience folder
+                    # copy:
+                    # src: Ubuntu_Sapience
+                    # dest: /home/ibamdin/Documents
+                    # mode: '777'
+
+                    # - name: Install Sapeince
+                    # script: /home/ibadmin/Documents/Ubuntu_Sapience/sap.out
+
+                    # - name: Delete Sapeince setup
+                    # file:
+                    # state: absent
+                    # path: /home/ibadmin/Documents/Ubuntu_Sapience
+
+                    # - name: Copy AV setup
+                    # copy:
+                    # src: LinuxSetup64
+                    # dest: /home/ibadmin/Documents
+                    # mode: '777'
+
+            
+
+
