@@ -1,0 +1,120 @@
+---
+- hosts: server
+  user: ibadmin
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+
+         - name: ping all node
+           ping:
+
+         - name: update
+           apt:
+                 update_cache: yes
+
+         - name: dist upgrade
+           apt:
+                 upgrade: dist
+
+         - name: Install Curl
+           apt:
+                 name: curl
+                 state: present
+
+         - name: Install Chrome
+           apt:
+                 deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+         - name: Install Java11
+           apt:
+                 name: openjdk-11-jdk
+                 state: present
+
+         - name: Install Vscode
+           apt:
+                 deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+
+                   # - name: netbeans install
+                   # apt:
+                   # deb: https://github.com/codelerity/netbeans-installers/releases/download/v16-build1/apache-netbeans_16-1_amd64.deb
+      
+         - name: snap install
+           apt:
+                 name: snap
+                 state: present
+
+         - name: Install Notepad++
+           snap:
+                 name: notepad-plus-plus
+                 state: present
+
+         - name: Install Apache2
+           apt:
+                 name: apache2
+                 state: present
+         
+         - name: soft properties common
+           apt: 
+                 name: software-properties-common
+                 state: present
+         
+         - name: add ppa ondrej/php 
+           apt_repository:
+                 repo: ppa:ondrej/php
+                 state: present     
+                
+         - name: Install php7.4
+           apt:
+                 name: ['php7.4-cli','php7.4-json','php7.4-common','php7.4-mysql','php7.4-zip','php7.4-gd','php7.4-mbstring','php7.4-curl','php7.4-xml','php7.4-bcmath']
+                 
+
+         - name: Install mysql
+           apt:
+                 name: ['mysql-server','python3-mysqldb']          
+
+         - name: copy my.cnf
+           template:
+                   src: my.cnf
+                   dest: /root/.my.cnf
+
+         - name: update root password
+           mysql_user:
+                    name: root
+                    host: "{{item}}"
+                    priv: '*.*:ALL,GRANT'
+                    login_unix_socket: /var/run/mysqld/mysqld.sock
+                    password: server.123
+           with_items:
+                    - localhost
+                    - 127.0.0.1
+
+         - name: update apt cache
+           apt:
+                 update_cache: yes
+         
+         - name: copy node.js PPA
+           copy:
+                 src: /home/ibadmin/Documents/nodesource1_setup.sh
+                 dest: /home/ibadmin/Documents
+                 mode: 01777
+         
+         - name: Execute script
+           script: /home/ibadmin/Documents/nodesource1_setup.sh
+
+
+         - name: install nodejs
+           apt:
+                 name: nodejs
+                 state: present
+
+                   # - name: user create
+                   # user:
+                   # name: Admin
+                   # password : Info@12345
+                   # state: present          
+
+                   # - name: install npm
+                   # apt:
+                   # name: npm
+                   # state: present         
